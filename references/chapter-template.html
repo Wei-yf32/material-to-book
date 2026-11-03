@@ -1,0 +1,102 @@
+<h1>03　标题：一句话说清这一章解决什么问题</h1>
+<p class="h1note">两三句话说清：读者现在的困惑是什么、这一章给什么、读完能干什么。不要写"本章介绍……"。</p>
+
+<div class="box key">
+<strong>本章目标</strong>
+<ul>
+<li>能用一句话说清 X 是什么、为什么需要它；</li>
+<li>能看懂 Y 公式里每个符号，并手算一个小例子；</li>
+<li>能独立跑通实验 Z，并解释输出里每个数字；</li>
+<li>能说出这个方法在什么情况下会失效。</li>
+</ul>
+</div>
+
+<h2>导入：从一个具体事件说起</h2>
+<p>用真实事件/真实数据开场（谁、哪年、什么指标），然后指出它暴露的问题，最后落到本章要回答的 2~3 个问题。500~900 字。</p>
+
+<h2>3.1　直觉：先不用公式</h2>
+<p>生活类比，引导读者自己得出"这里需要一个什么工具"。</p>
+
+<h2>3.2　形式化：把它写成可计算的式子</h2>
+<p>定义、公式、推导。每个符号第一次出现都要解释：</p>
+<p>\[ H(D) = -\sum_{k=1}^{K} p_k \log_2 p_k \]</p>
+<p>其中 \(p_k\) 是第 \(k\) 类在数据集 \(D\) 中占的比例，\(K\) 是类别数。注意 "<code>&lt;</code>" 要写成 <code>&amp;lt;</code>。</p>
+
+<h2>3.3　例子：拿一张小表从头算一遍</h2>
+<table>
+<thead><tr><th style="width:18%">样本</th><th>x1</th><th>x2</th><th>标签</th></tr></thead>
+<tbody>
+<tr><td>1</td><td>0</td><td>0</td><td>0</td></tr>
+<tr><td>2</td><td>0</td><td>1</td><td>1</td></tr>
+</tbody>
+</table>
+<p>每一步都给中间值，最后一行给结论。</p>
+
+<h2>3.4　代码：把公式落到矩阵上</h2>
+<p>导语：这段代码只做一件事——把上式的 \(p_k\) 从数据里数出来。</p>
+<!--INCLUDE-CODE path=src/vol4/ch03_entropy.py lang=py-->
+<p>分段讲：每 5~15 行一组，说清"为什么这么写、如果换个写法会怎样"。</p>
+
+<h2>3.5　实验 3-A：亲手验证一下</h2>
+<div class="box lab">
+<p class="lab-head"><b>实验 3-A</b>　标题</p>
+<p><b>1. 实验目的</b></p>
+<p>…</p>
+
+<p><b>2. 实验要求</b></p>
+<ul><li>…</li></ul>
+
+<p><b>3. 文件结构</b></p>
+<!--INCLUDE-TREE path=src/vol4/tree_3A.txt-->
+
+<p><b>4. 阅读顺序</b></p>
+<ol class="steps">
+<li>先看数据速览：…</li>
+<li>再读 <code>load()</code>：…</li>
+<li>然后读核心函数：…</li>
+<li>最后看输出，把每个数字对回代码；</li>
+<li>自己跑一遍：<code>python _build/tools/runpy.py _build/src/vol4/ch03_entropy.py</code>。</li>
+</ol>
+
+<p><b>5. 数据长什么样</b></p>
+<!--INCLUDE-DATA path=out/vol4/csv_xxx.txt-->
+<p><b>看什么：</b></p>
+<ul><li>…</li><li>…</li><li>…</li></ul>
+<figure><img src="../../figures/vol4/v403_data.svg" class="w80">
+<figcaption>图 3-… 说明。数据由 <code>src/figs/vol4_03.py</code> 从原始 CSV 统计。</figcaption></figure>
+
+<p><b>6. 逐段讲代码</b></p>
+<!--INCLUDE-CODE path=src/vol4/ch03_entropy.py lang=py-->
+<p>…</p>
+
+<p><b>7. 运行输出怎么读</b></p>
+<!--INCLUDE-OUTPUT path=out/vol4/ch03_entropy.txt-->
+<p>…</p>
+
+<p><b>8. 动手改一改</b></p>
+<ul><li>…</li></ul>
+</div>
+
+<h2>3.6　常见错误与陷阱</h2>
+<div class="box warn">
+<strong>错误 1：……</strong>
+<p>现象 → 原因 → 怎么改。</p>
+</div>
+
+<h2>3.7　小结、动手改一改与延伸阅读</h2>
+<p>三到五条"带走的话"，每条一句话。</p>
+<div class="box paper">
+<strong>延伸阅读</strong>
+<ul><li>作者等，<i>标题</i>，arXiv:XXXX.XXXXX（年份）——这篇到底做了什么、读哪几节。</li></ul>
+</div>
+
+<h2>3.8　本单元课件覆盖表</h2>
+<p>下表把原始材料的每一页映射到本书。第 3 列只允许：复述 / 改写 / 重绘 / 新增 / 合并→§x.y（理由） / 无内容（封面、分隔页等）。</p>
+<table>
+<thead><tr><th style="width:14%">课件页</th><th style="width:22%">本讲义位置</th><th>处理方式与理由</th></tr></thead>
+<tbody>
+<tr><td>ML5 p4</td><td>§3.3</td><td>复述 + 新增：原表逐行抄，另加"当天天气"一例</td></tr>
+<tr><td>ML5 p5</td><td>§3.1、§3.4</td><td>改写：水果例子并入直觉节，图重绘为图 3-2</td></tr>
+<tr><td>ML5 p6</td><td>—</td><td>无内容（章节封面）</td></tr>
+</tbody>
+</table>

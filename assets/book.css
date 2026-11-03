@@ -1,0 +1,368 @@
+/* ==========================================================================
+   驭风计划 · 计算机与人工智能系统讲义  —— 印刷样式表
+   目标：A4 印刷、中英混排、公式(SVG)、代码、图表、提示框
+   ========================================================================== */
+
+:root{
+  --ink:#1a1a1a;
+  --ink-soft:#3d3d3d;
+  --rule:#d8d2c6;
+  --accent:#0b4f6c;      /* 深青：一级标题 */
+  --accent2:#8a3b12;     /* 赭石：强调 */
+  --accent3:#1e6b52;     /* 墨绿：实验 */
+  --paper:#ffffff;
+  --code-bg:#f6f4ef;
+  --code-ink:#20242b;
+  --note-bg:#eef4f8;
+  --warn-bg:#fdf1e7;
+  --key-bg:#f0f5ef;
+  --lab-bg:#f7f5ff;
+}
+
+/* ---------- 页面 ---------- */
+@page{
+  size:A4;
+  margin:20mm 17mm 18mm 17mm;
+}
+@page:first{ margin:0; }
+
+html{ -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+body{
+  margin:0; padding:0;
+  font-family:"Noto Serif SC","Source Han Serif SC","SimSun",serif;
+  font-size:10.5pt;
+  line-height:1.72;
+  color:var(--ink);
+  text-align:justify;
+  hyphens:none;
+}
+
+/* ---------- 封面 ---------- */
+.cover{
+  height:297mm; width:210mm;
+  page-break-after:always;
+  position:relative;
+  box-sizing:border-box;
+  padding:46mm 24mm 22mm 24mm;
+  background:var(--paper);
+}
+.cover .band{
+  position:absolute; top:0; left:0; right:0; height:15mm;
+  background:var(--accent);
+}
+.cover .band .cn{
+  position:absolute; left:24mm; top:5.6mm; color:#cfe0e8;
+  font-family:"Microsoft YaHei",sans-serif; font-size:8pt; letter-spacing:.28em;
+}
+.cover .band .vol{
+  position:absolute; right:24mm; top:1.4mm; color:#ffffff;
+  font-family:"Times New Roman",serif; font-weight:700; font-size:24pt;
+  letter-spacing:.06em;
+}
+.cover .series{
+  font-family:"Microsoft YaHei","Noto Sans SC",sans-serif;
+  font-size:10pt; letter-spacing:.32em; color:var(--accent2);
+  margin-bottom:10mm;
+}
+.cover h1{
+  font-family:"Noto Serif SC","Source Han Serif SC",serif;
+  font-size:31pt; line-height:1.28; font-weight:700; color:var(--accent);
+  border:none; margin:0 0 6mm 0; padding:0; page-break-before:avoid;
+}
+.cover .sub{
+  font-family:"Microsoft YaHei",sans-serif;
+  font-size:13pt; color:var(--ink-soft); line-height:1.6; margin-bottom:14mm;
+}
+.cover .meta{
+  position:absolute; bottom:24mm; left:24mm; right:24mm;
+  font-family:"Microsoft YaHei",sans-serif; font-size:9.5pt; color:#5b5b5b;
+  border-top:.6pt solid var(--rule); padding-top:4mm; line-height:1.9;
+}
+.cover .emblem{
+  position:absolute; right:24mm; top:22mm;
+  width:44mm; text-align:right;
+  font-family:"Microsoft YaHei",sans-serif; font-size:8pt; color:#8d8d8d;
+  line-height:1.6;
+}
+.cover .rule{
+  width:62mm; height:1.6mm; background:var(--accent2); margin:0 0 6mm 0;
+}
+.cover .bigvol{
+  position:absolute; left:0; right:0; bottom:56mm;
+  text-align:center; font-family:"Times New Roman",serif; font-weight:700;
+  font-size:150pt; line-height:1; color:#eff1ec; letter-spacing:.04em;
+  z-index:0;
+}
+.tocmark{ color:#fff; font-size:.4pt; }
+
+/* ---------- 目录 ---------- */
+.toc{ page-break-after:always; }
+.toc h1{
+  font-family:"Microsoft YaHei",sans-serif; font-size:20pt; color:var(--accent);
+  border-bottom:2pt solid var(--accent); padding-bottom:3mm; margin:0 0 7mm 0;
+  page-break-before:avoid;
+}
+.toc ol{ list-style:none; margin:0; padding:0; }
+.toc .t1{
+  font-family:"Microsoft YaHei",sans-serif; font-weight:700; font-size:11pt;
+  margin-top:3.2mm; color:var(--accent); display:flex; align-items:baseline;
+}
+.toc .t2{
+  font-size:9.8pt; margin-left:6mm; color:var(--ink-soft);
+  display:flex; align-items:baseline;
+}
+.toc .t1 .n,.toc .t2 .n{ white-space:nowrap; margin-right:2.5mm; }
+.toc .dotfill{
+  flex:1 1 auto; border-bottom:1px dotted #bdbdbd; margin:0 2mm 1.2mm 2mm; min-width:8mm;
+}
+.toc .pg{ white-space:nowrap; font-variant-numeric:tabular-nums; }
+
+/* ---------- 标题 ---------- */
+h1{
+  font-family:"Noto Serif SC","Source Han Serif SC",serif;
+  font-size:20pt; line-height:1.35; font-weight:700; color:var(--accent);
+  margin:0 0 6mm 0; padding-bottom:3mm;
+  border-bottom:2.2pt solid var(--accent);
+  page-break-before:always; page-break-after:avoid;
+  string-set:chapter content();
+}
+h2{
+  font-family:"Microsoft YaHei","Noto Sans SC",sans-serif;
+  font-size:14pt; font-weight:700; color:var(--accent);
+  margin:8mm 0 3mm 0; padding-left:3.2mm;
+  border-left:4pt solid var(--accent);
+  page-break-after:avoid;
+}
+h3{
+  font-family:"Microsoft YaHei","Noto Sans SC",sans-serif;
+  font-size:11.6pt; font-weight:700; color:#243b4a;
+  margin:6mm 0 2mm 0; page-break-after:avoid;
+}
+h4{
+  font-family:"Microsoft YaHei","Noto Sans SC",sans-serif;
+  font-size:10.6pt; font-weight:700; color:var(--accent2);
+  margin:4.5mm 0 1.5mm 0; page-break-after:avoid;
+}
+h2+.h2note,h1+.h1note{
+  font-family:"Microsoft YaHei",sans-serif; font-size:9pt; color:#666;
+  margin:-2mm 0 4mm 0;
+}
+
+/* ---------- 正文元素 ---------- */
+p{ margin:0 0 2.4mm 0; orphans:2; widows:2; }
+strong{ font-weight:700; color:#111; }
+em{ font-style:normal; color:var(--accent2); font-weight:600; }
+a{ color:var(--accent); text-decoration:none; }
+sup,sub{ line-height:0; }
+
+ul,ol{ margin:0 0 2.6mm 0; padding-left:7mm; }
+li{ margin:0 0 1.2mm 0; }
+li>ul,li>ol{ margin-top:1mm; margin-bottom:1mm; }
+
+blockquote{
+  margin:3mm 0; padding:2.6mm 5mm;
+  border-left:3pt solid var(--rule); background:#faf9f6;
+  color:var(--ink-soft); font-size:10pt;
+}
+
+hr{ border:none; border-top:.6pt solid var(--rule); margin:6mm 0; }
+
+/* ---------- 行内代码与代码块 ---------- */
+code{
+  font-family:"Consolas","Cascadia Mono","Courier New",monospace;
+  font-size:9.1pt; background:#f0ede6; padding:.3mm 1.1mm; border-radius:2px;
+  color:#7a2e12; word-break:break-word;
+}
+pre.code{
+  font-family:"Consolas","Cascadia Mono",monospace;
+  font-size:8.5pt; line-height:1.58;
+  background:var(--code-bg); color:var(--code-ink);
+  border:.5pt solid #e2ddd2; border-left:3pt solid var(--accent);
+  margin:2.8mm 0 3.2mm 0; padding:2.6mm 3.2mm;
+  white-space:pre-wrap; word-break:break-word;
+  page-break-inside:auto; tab-size:4;
+}
+pre.code .ln{ color:#a0a0a0; }
+pre.output{
+  font-family:"Consolas",monospace; font-size:8.2pt; line-height:1.5;
+  background:#20242b; color:#e8e6e1;
+  border:none; border-radius:2px;
+  margin:1.5mm 0 3mm 0; padding:2.4mm 3mm;
+  white-space:pre-wrap; word-break:break-word;
+}
+pre.output::before{
+  content:"运行输出"; display:block; font-family:"Microsoft YaHei",sans-serif;
+  font-size:7.4pt; color:#9aa4b2; margin-bottom:1.2mm; letter-spacing:.1em;
+}
+
+/* ---------- 表格 ---------- */
+table{
+  border-collapse:collapse; width:100%; margin:3mm 0 3.5mm 0;
+  font-size:9pt; line-height:1.5;
+  page-break-inside:avoid;
+}
+thead{ display:table-header-group; }
+th{
+  background:#eae5da; font-family:"Microsoft YaHei",sans-serif; font-weight:700;
+  text-align:left; padding:1.6mm 2mm; border:.5pt solid #cfc7b8; color:#22313a;
+  font-size:8.8pt;
+}
+td{ padding:1.4mm 2mm; border:.5pt solid #d8d2c4; vertical-align:top; text-align:left; }
+table td, table th{ text-align:left; }
+table code, td code, th code{ text-align:left; }
+tbody tr:nth-child(even){ background:#faf9f5; }
+table.compact{ font-size:8.4pt; }
+td.num,th.num{ text-align:right; font-variant-numeric:tabular-nums; }
+caption{
+  caption-side:top; text-align:left; font-family:"Microsoft YaHei",sans-serif;
+  font-size:8.8pt; color:#4a4a4a; padding-bottom:1.4mm;
+}
+
+/* ---------- 图 ---------- */
+figure{
+  margin:4mm 0 4.5mm 0; text-align:center; page-break-inside:avoid;
+}
+figure img{ max-width:100%; height:auto; }
+figure img.w90{ width:90%; }
+figure img.w80{ width:80%; }
+figure img.w70{ width:70%; }
+figure img.w60{ width:60%; }
+figure img.w50{ width:50%; }
+figure img.w45{ width:45%; };figure img.w50{ width:50%; };figure img.w55{ width:55%; };figure img.w60{ width:60%; };figure img.w65{ width:65%; };figure img.w70{ width:70%; };figure img.w75{ width:75%; };figure img.w80{ width:80%; };figure img.w85{ width:85%; };figure img.w90{ width:90%; };figure img.w95{ width:95%; }
+figcaption{
+  font-family:"Microsoft YaHei",sans-serif; font-size:8.6pt; color:#4a4a4a;
+  margin-top:1.8mm; text-align:center; line-height:1.5;
+}
+.figrow{ display:flex; gap:4mm; justify-content:center; align-items:flex-end; }
+.figrow figure{ flex:1 1 0; margin:2mm 0; }
+
+/* ---------- 提示框 ---------- */
+.box{
+  margin:3.4mm 0; padding:2.8mm 4mm; border-radius:2px;
+  page-break-inside:avoid; font-size:9.8pt;
+  border-left:3.4pt solid #999;
+}
+.box .box-title{
+  font-family:"Microsoft YaHei",sans-serif; font-weight:700; font-size:9.4pt;
+  margin-bottom:1.4mm; letter-spacing:.02em;
+}
+.box p:last-child{ margin-bottom:0; }
+.box ul,.box ol{ margin-bottom:0; }
+.box.note{ background:var(--note-bg); border-color:#3f7f9e; }
+.box.note .box-title{ color:#1c5a75; }
+.box.warn{ background:var(--warn-bg); border-color:#c26a2a; }
+.box.warn .box-title{ color:#9a4a12; }
+.box.key{ background:var(--key-bg); border-color:#3f7f5a; }
+.box.key .box-title{ color:#23603f; }
+.box.lab{ background:var(--lab-bg); border-color:#5c4f9e; }
+.box.lab .box-title{ color:#4a3d8a; }
+.box.paper{ background:#fbfaf4; border-color:#8a7b3a; }
+.box.paper .box-title{ color:#6d6023; }
+
+/* 定义式术语表 */
+dl.terms{ margin:2.5mm 0; font-size:9.8pt; }
+dl.terms dt{ font-weight:700; color:var(--accent); margin-top:1.8mm; }
+dl.terms dd{ margin:.6mm 0 0 6mm; color:var(--ink-soft); }
+
+/* ---------- 实验块 ---------- */
+.lab-head{
+  background:#4a3d8a; color:#fff; font-family:"Microsoft YaHei",sans-serif;
+  font-size:10.4pt; font-weight:700; padding:2mm 4mm; margin:6mm 0 3mm 0;
+  page-break-after:avoid; border-radius:2px;
+}
+.steps{ counter-reset:step; margin:2.5mm 0; padding-left:0; list-style:none; }
+.steps>li{ counter-increment:step; position:relative; padding-left:8mm; margin-bottom:2mm; }
+.steps>li::before{
+  content:counter(step); position:absolute; left:0; top:.2mm;
+  width:5.2mm; height:5.2mm; line-height:5.2mm; text-align:center;
+  background:var(--accent); color:#fff; border-radius:50%;
+  font-family:"Microsoft YaHei",sans-serif; font-size:8pt;
+}
+
+/* ---------- 公式 ---------- */
+mjx-container{ margin:2mm 0 !important; }
+mjx-container[display="true"]{ margin:2.6mm 0 !important; }
+.eq-no{ float:right; font-size:9pt; color:#666; }
+
+/* ---------- 打印控制 ---------- */
+.pb{ page-break-before:always; }
+.avoid{ page-break-inside:avoid; }
+.nobreak{ page-break-inside:avoid; }
+.small{ font-size:9.2pt; }
+.center{ text-align:center; }
+.two-col{ column-count:2; column-gap:8mm; }
+.tag{
+  display:inline-block; font-family:"Microsoft YaHei",sans-serif; font-size:7.8pt;
+  padding:.2mm 1.6mm; border-radius:2px; color:#fff; background:var(--accent);
+  vertical-align:1px; margin-right:1.5mm;
+}
+.tag.py{ background:#2b6cb0; } .tag.cpp{ background:#9c2f2f; }
+.tag.c{ background:#6b6b6b; } .tag.both{ background:#1e6b52; }
+.tag.new{ background:#8a3b12; }
+
+/* ---------- 语法高亮（Pygments, classprefix pg-）---------- */
+pre.code .pg-k,pre.code .pg-kn,pre.code .pg-kd,pre.code .pg-kr,pre.code .pg-kt{color:#0b5394;font-weight:600}
+pre.code .pg-s,pre.code .pg-s1,pre.code .pg-s2,pre.code .pg-sb,pre.code .pg-sc,pre.code .pg-sd,pre.code .pg-se,pre.code .pg-sh,pre.code .pg-si,pre.code .pg-sr,pre.code .pg-ss,pre.code .pg-sx{color:#8a3b12}
+pre.code .pg-c,pre.code .pg-c1,pre.code .pg-cm,pre.code .pg-cs,pre.code .pg-cp,pre.code .pg-ch{color:#7a7a7a;font-style:italic}
+pre.code .pg-m,pre.code .pg-mf,pre.code .pg-mh,pre.code .pg-mi,pre.code .pg-mo{color:#5c4f9e}
+pre.code .pg-nf,pre.code .pg-fm{color:#1e6b52;font-weight:600}
+pre.code .pg-nc,pre.code .pg-nn{color:#8a3b12;font-weight:600}
+pre.code .pg-o,pre.code .pg-ow{color:#333}
+pre.code .pg-nb,pre.code .pg-bp{color:#2b6cb0}
+pre.code .pg-nd{color:#a8862a}
+pre.code .pg-n{color:#20242b}
+pre.code .pg-err{color:#a4382f;border-bottom:1px dotted #a4382f}
+.hm{ color:#fff; font-size:.4pt; letter-spacing:0; }
+
+.cover .points{
+  margin:2mm 0 0 0; padding:0; list-style:none;
+  column-count:2; column-gap:14mm;
+  font-family:"Microsoft YaHei",sans-serif; font-size:9.2pt; color:#4b5a63;
+  line-height:2.05;
+}
+.cover .points li{ position:relative; padding-left:4mm; break-inside:avoid; }
+.cover .points li::before{
+  content:""; position:absolute; left:0; top:2.6mm;
+  width:1.4mm; height:1.4mm; background:var(--accent2);
+}
+
+/* 课件原页影印：整页缩略，比正文图略小，加细边框与浅底，避免和重绘图混淆 */
+figure.cwpage{ margin:14px 0 18px; text-align:center; }
+figure.cwpage img{ width:82%; height:auto; border:1px solid #d7d2c6; box-shadow:0 1px 3px rgba(0,0,0,.06); }
+figure.cwpage figcaption{ font-size:8.6pt; color:#6b6558; margin-top:5px; line-height:1.55; }
+
+/* ---------- 代码文件标签条（像 IDE 里标出这段代码来自哪个文件） ---------- */
+.codefile{
+  display:flex; justify-content:space-between; align-items:baseline;
+  background:#eeeae0; border:.5pt solid #e2ddd2; border-bottom:none;
+  border-left:3pt solid var(--accent);
+  margin:2.8mm 0 0 0; padding:1.6mm 3.2mm 1.2mm 3.2mm;
+  font-family:"Consolas","Cascadia Mono",monospace; font-size:8.2pt; color:#5c5648;
+  page-break-after:avoid;
+}
+.codefile .cf-path{ font-weight:600; color:#3c3830; }
+.codefile .cf-note{ color:#8a8272; font-family:"Noto Serif SC","Microsoft YaHei",serif; font-size:8pt; }
+.codefile + pre.code{ margin-top:0; }
+
+/* ---------- 目录树 ---------- */
+pre.tree{
+  font-family:"Consolas","Cascadia Mono",monospace; font-size:8.3pt; line-height:1.5;
+  background:#f7f5f0; border:.5pt solid #e2ddd2; border-left:3pt solid #7d8f7a;
+  margin:2.6mm 0 3mm 0; padding:2.4mm 3.2mm; white-space:pre-wrap; word-break:break-word;
+}
+pre.tree .t-dir{ color:#2c6e9b; font-weight:600; }
+pre.tree .t-py{ color:#3f7f5a; }
+pre.tree .t-data{ color:#a4382f; }
+pre.tree .t-out{ color:#8a8272; }
+pre.tree .t-cm{ color:#8a8272; font-style:italic; }
+pre.data{
+  font-family:"Consolas","Cascadia Mono",monospace; font-size:7.8pt; line-height:1.42;
+  background:#f7f5ef; color:#332f28;
+  border:.5pt solid #ded8c9; border-left:3pt solid #6f7f9a;
+  margin:1.8mm 0 3mm 0; padding:2.2mm 2.8mm;
+  white-space:pre-wrap; word-break:break-word;
+}
+pre.data::before{
+  content:"数据速览"; display:block; font-family:"Noto Serif SC","Microsoft YaHei",serif;
+  font-size:8pt; color:#6f7f9a; letter-spacing:.5pt; margin-bottom:1.2mm;
+}
