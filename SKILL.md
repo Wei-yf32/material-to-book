@@ -254,7 +254,7 @@ material-to-book/
 ├── install.ps1 install.sh  # 一键安装（装依赖 + 复制到 ~/.dsh/skills + 体检）
 ├── requirements.txt        # 五个必需库
 ├── INSTALL.md              # 手工安装、升级、卸载、排错表
-├── scripts/            # 26 个可执行工具（init_project 会复制到项目的 _build/tools/）
+├── scripts/            # 25 个可执行工具（init_project 会复制到项目的 _build/tools/）
 │   ├── intake.py           # 阶段 −1：扫文件角色 + 打印访谈卡 + 生成 intake.json
 │   ├── doctor.py           # 环境体检（解释器/依赖/浏览器/字体/脚本）
 │   ├── build.py            # HTML→PDF 流水线（配置驱动，读 _build/book.json）
