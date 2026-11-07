@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""扫合订 PDF 里是否残留未渲染的 LaTeX（\( \) \[ \] \\frac \\sum_ 等）。"""
+r"""扫合订 PDF 里是否残留未渲染的 LaTeX（\( \) \[ \] \\frac \\sum_ 等）。"""
 import re
 import pymupdf as fitz
 

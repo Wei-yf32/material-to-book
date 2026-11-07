@@ -74,6 +74,11 @@ def main():
             "本卷为《%s》之一部分。" % a.title,
             "插图由本书脚本基于真实数据重新绘制；代码均可独立复现，输出为实际运行结果。"
         ],
+        # 章号体例：textbook = 「第 1 章 / 1.1」；lecture = 「01 / 01.1」
+        # 两种都不给「习题 / 本章小结 / 附录」编号
+        "numbering": "textbook",
+        # 访谈结论（scripts/intake.py --apply 会写这里；没有就删掉）
+        "intake": {},
         "volumes": vols,
     }
     io.open(os.path.join(build, "book.json"), "w", encoding="utf-8", newline="\n").write(

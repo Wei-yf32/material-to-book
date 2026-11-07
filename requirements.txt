@@ -1,0 +1,10 @@
+# material-to-book 运行依赖
+# 只列出构建 PDF 必需与常用可选的库；Office 导出（docx/pptx/xlsx）不在本 skill 范围内。
+pymupdf>=1.23        # 合订、页码回填、书签、PDF 体检
+matplotlib>=3.7      # 全部插图（SVG，文字转路径）
+numpy>=1.24
+pandas>=2.0          # 读 CSV/Excel 数据做图与表
+pygments>=2.15       # 代码高亮
+
+# 可选：图片处理（把照片/截图压到合适尺寸再嵌）
+Pillow>=10.0

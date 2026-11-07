@@ -47,6 +47,10 @@ EDITION = CFG.get("edition") or ""
 KICKER = CFG.get("kicker") or ""
 AUTHOR = CFG.get("author") or ""
 HEADER_RIGHT = CFG.get("header_right") or BRAND
+# 章号体例：textbook=「第 N 章 / N.k」，lecture=「NN / NN.k」
+NUMBERING = (CFG.get("numbering") or "textbook").lower()
+if NUMBERING not in ("textbook", "lecture"):
+    NUMBERING = "textbook"
 _meta_lines = CFG.get("meta_lines") or ["本卷为《%s》之一部分。" % BOOK_TITLE]
 FOOTER_HTML = "<br>".join(_meta_lines)
 
@@ -73,6 +77,9 @@ for _k, _v in (CFG.get("volumes") or {}).items():
     VOLUMES[_k] = dict(title=_v["title"], file=_v["file"],
                        subtitle=_v.get("subtitle", ""),
                        points=_v.get("points", []))
+    for _extra in ("header_right", "keywords"):
+        if _v.get(_extra):
+            VOLUMES[_k][_extra] = _v[_extra]
 if not VOLUMES:
     raise SystemExit("缺少 _build/book.json，或 volumes 为空：先运行 scripts/init_project.py")
 
@@ -119,12 +126,17 @@ TAIL = """
 def read(p):
     # 容错：不同工具保存的 UTF-8 带 BOM / UTF-16 / GBK 都能读
     raw = open(p, "rb").read()
+    doc = None
     for enc in ("utf-8-sig", "utf-16", "gbk"):
         try:
-            return raw.decode(enc)
+            doc = raw.decode(enc)
+            break
         except (UnicodeDecodeError, UnicodeError):
             continue
-    return raw.decode("utf-8", "replace")
+    if doc is None:
+        doc = raw.decode("utf-8", "replace")
+    # 统一换行：<pre> 里的 CRLF 会被当成两次换行，渲染出空行加倍
+    return doc.replace("\r\n", "\n").replace("\r", "\n")
 
 
 def write(p, s):
@@ -270,11 +282,127 @@ def collect(vol_id):
         name = os.path.basename(f)
         if name.startswith("_") or name == "cover.html":
             continue
-        frags.append((name, fix_fig_paths(expand_includes(read(f)))))
-    return frags
+        frags.append((name, fix_lt_in_math(fix_fig_paths(expand_includes(read(f))))))
+    return renumber_headings(flatten_math_in_thead(frags))
 
 
 HEAD_RE = re.compile(r"<(h1|h2)\b([^>]*)>(.*?)</\1>", re.S | re.I)
+
+
+NONUM_PAT = re.compile(r"^(习题|本章小结|小结|附录|前言|复习题)")
+
+
+def _is_nonum(lvl, attrs, body):
+    if lvl != 2:
+        return False
+    if "nonum" in (attrs or ""):
+        return True
+    plain = re.sub(r"<[^>]+>", "", body or "").strip()
+    return bool(NONUM_PAT.match(plain))
+
+
+def renumber_headings(frags):
+    """把正文 h1/h2 的编号统一改写成"文件前缀章号 + 出现序号"。
+
+    章节作者写的编号（"2.1 直觉"、"4．2 泰勒"）一律先剥掉，再按文件名前缀与出现顺序重排，
+    这样正文标题与目录、书签三处编号永远一致；否则会出现目录写 04.3、正文写 3.2 的错位。
+    """
+    out = []
+    for name, txt in frags:
+        m_nn = re.match(r"(\d+)", name)
+        nn = int(m_nn.group(1)) if m_nn else 0
+        state = {"sec": 0}
+
+        numbered = 1 <= nn < 90
+
+        def repl(m):
+            tag, attrs, inner = m.group(1), m.group(2), m.group(3)
+            lvl = 1 if tag.lower() == "h1" else 2
+            body = re.sub(r'<span class="hm">.*?</span>', "", inner)
+            body = re.sub(r"^\s*\d+(?:[.．]\d+)*[\s、.．]+", "", body).strip()
+            body = re.sub(r"^第\s*\d+\s*章[\s　]*", "", body).strip()
+            if not body:
+                return m.group(0)
+            if not numbered or _is_nonum(lvl, attrs, body):
+                if lvl == 1:
+                    state["sec"] = 0
+                return "<%s%s>%s</%s>" % (tag, attrs, body, tag)
+            if lvl == 1:
+                state["sec"] = 0
+                if NUMBERING == "textbook":
+                    head = "第 %d 章　%s" % (nn, body)
+                else:
+                    head = "%02d　%s" % (nn, body)
+            else:
+                state["sec"] += 1
+                if NUMBERING == "textbook":
+                    head = "%d.%d　%s" % (nn, state["sec"], body)
+                else:
+                    head = "%02d.%d　%s" % (nn, state["sec"], body)
+            return "<%s%s>%s</%s>" % (tag, attrs, head, tag)
+
+        out.append((name, HEAD_RE.sub(repl, txt)))
+    return out
+
+
+def plain_title(s):
+    """书签与表头用的纯文本标题：去掉 LaTeX 定界符与控制序列，尽量保留可读内容。"""
+    s = re.sub(r"\\sqrt\[([^\]]*)\]\{([^{}]*)\}", r"√[\1](\2)", s)
+    s = re.sub(r"\\sqrt\{([^{}]*)\}", r"√(\1)", s)
+    s = re.sub(r"\\\((.*?)\\\)", r"\1", s, flags=re.S)
+    s = re.sub(r"\\\[(.*?)\\\]", r"\1", s, flags=re.S)
+    for k, v in GREEK:
+        s = re.sub(re.escape(k) + r"(?![a-zA-Z])", v, s)
+    s = re.sub(r"\\[a-zA-Z]+\s*", "", s)
+    s = s.replace("\\", "").replace("{", "").replace("}", "")
+    return re.sub(r"\s+", " ", s).strip()
+
+
+# 表头/书签里的希腊字母与常用符号，换成能直接印刷的 Unicode
+GREEK = [
+    ("\\omega", "ω"), ("\\Omega", "Ω"), ("\\delta", "δ"), ("\\Delta", "Δ"),
+    ("\\theta", "θ"), ("\\pi", "π"), ("\\varphi", "φ"), ("\\phi", "φ"),
+    ("\\alpha", "α"), ("\\beta", "β"), ("\\gamma", "γ"), ("\\Gamma", "Γ"),
+    ("\\sigma", "σ"), ("\\tau", "τ"), ("\\lambda", "λ"), ("\\mu", "μ"),
+    ("\\xi", "ξ"), ("\\zeta", "ζ"), ("\\eta", "η"), ("\\rho", "ρ"),
+    ("\\infty", "∞"), ("\\pm", "±"), ("\\times", "×"), ("\\cdot", "·"),
+    ("\\le", "≤"), ("\\ge", "≥"), ("\\ne", "≠"), ("\\to", "→"),
+    ("\\partial", "∂"), ("\\int", "∫"), ("\\sum", "∑"), ("\\in", "∈"),
+    ("\\Rightarrow", "⇒"), ("\\leftrightarrow", "↔"), ("\\approx", "≈"),
+]
+
+
+TH_RE = re.compile(r"(<th\b[^>]*>)(.*?)(</th>)", re.S | re.I)
+THEAD_RE = re.compile(r"<thead\b.*?</thead>", re.S | re.I)
+
+
+def flatten_math_in_thead(frags):
+    """把表头里的 LaTeX 换成纯文本。
+
+    Chromium 打印跨页表格时会克隆表头，而克隆出来的节点不会再跑一遍 MathJax，
+    于是第二页起的表头里公式全变空白。表头改成纯文本（f(t)/F(ω)）可以彻底避免。
+    """
+    out = []
+    for name, txt in frags:
+        def fix_head(m):
+            return TH_RE.sub(
+                lambda mm: mm.group(1) + html.escape(plain_title(strip_tags(mm.group(2)))) + mm.group(3),
+                m.group(0))
+
+        out.append((name, THEAD_RE.sub(fix_head, txt)))
+    return out
+
+
+MATH_RE = re.compile(r"(\\\(.+?\\\)|\\\[.+?\\\])", re.S)
+
+
+def fix_lt_in_math(txt):
+    """公式里的 < > 会被浏览器当成标签，统一转义。"""
+    def repl(m):
+        seg = m.group(1)
+        seg = seg.replace("<", "&lt;")
+        return seg
+    return MATH_RE.sub(repl, txt)
 
 
 def strip_tags(s):
@@ -295,14 +423,31 @@ def extract_entries(frags):
             title = strip_tags(m.group(3))
             # 若标题自带编号（“1.1 xxx”），编号交给目录，标题里去掉，避免“00.1 1.1 xxx”
             title = re.sub(r"^\d+(?:[.．]\d+)*[\s、.．]+", "", title).strip()
+            title = re.sub(r"^第\s*\d+\s*章[\s　]*", "", title).strip()
             if not title:
                 continue
+            numbered = 1 <= nn < 90
             if lvl == 1:
                 sec = 0
-                entries.append((1, title, f"{nn:02d}"))
+                if not numbered:
+                    entries.append((1, title, ""))
+                else:
+                    if NUMBERING == "textbook":
+                        entries.append((1, title, f"第 {nn} 章"))
+                    else:
+                        entries.append((1, title, f"{nn:02d}"))
             else:
-                sec += 1
-                entries.append((2, title, f"{nn:02d}.{sec}"))
+                if _is_nonum(2, m.group(2) or "", m.group(3)):
+                    entries.append((2, title, ""))
+                else:
+                    sec += 1
+                    if not numbered:
+                        entries.append((2, title, ""))
+                    else:
+                        if NUMBERING == "textbook":
+                            entries.append((2, title, f"{nn}.{sec}"))
+                        else:
+                            entries.append((2, title, f"{nn:02d}.{sec}"))
     return entries
 
 
@@ -338,15 +483,18 @@ def build_toc(entries, numbers=None, placeholder="00"):
 
 def cover_html(meta, vol_id="vol0"):
     num = vol_id.replace("vol", "")
+    # 单卷本用 volc 这类非数字 id：留空，避免出现 VOL.0c
+    vol_label = ("VOL." + num.zfill(2)) if num.isdigit() else ""
+    big = num.zfill(2) if num.isdigit() else ""
     return f"""
 <div class="cover">
-  <div class="band"><span class="cn">{BRAND}</span><span class="vol">VOL.{num:0>2}</span></div>
+  <div class="band"><span class="cn">{BRAND}</span><span class="vol">{vol_label}</span></div>
   <div class="emblem">{ORG}<br>{EDITION}</div>
   <div class="series">{KICKER}</div>
   <h1>{meta['title']}</h1>
   <div class="rule"></div>
   <div class="sub">{meta['subtitle']}</div>
-  <div class="bigvol">{num:0>2}</div>
+  <div class="bigvol">{big}</div>
   <ul class="points">
     {''.join(f'<li>{p}</li>' for p in meta.get('points', []))}
   </ul>
@@ -445,7 +593,7 @@ def stamp(pdf_path, out_path, meta, entries, pages, start_num=1, header_text="")
         pg.insert_text(fitz.Point(48, 30), hdr, fontsize=7.6, fontfile=FONT,
                        fontname="msyh", color=(0.42, 0.42, 0.42))
         box = fitz.Rect(w - 48 - 170, 18, w - 48, 33)
-        pg.insert_textbox(box, HEADER_RIGHT, fontsize=7.2, fontfile=FONT,
+        pg.insert_textbox(box, meta.get("header_right") or HEADER_RIGHT, fontsize=7.2, fontfile=FONT,
                           fontname="msyh", color=(0.52, 0.52, 0.52), align=2)
         pg.draw_line(fitz.Point(48, 36), fitz.Point(w - 48, 36),
                      color=(0.82, 0.80, 0.76), width=0.5)
@@ -455,15 +603,15 @@ def stamp(pdf_path, out_path, meta, entries, pages, start_num=1, header_text="")
     toc = []
     for ent, p in zip(entries, pages):
         label = ent[2] if len(ent) > 2 else ""
-        title = ent[1]
+        title = plain_title(ent[1])
         toc.append([ent[0], f"{label} {title}".strip(), p])
     if toc:
         doc.set_toc(toc)
     doc.set_metadata({
-        "title": meta["title"] + " · " + BRAND,
+        "title": meta["title"] if meta.get("header_right") or meta.get("keywords") else meta["title"] + " · " + BRAND,
         "author": AUTHOR or BRAND,
         "subject": meta["subtitle"],
-        "keywords": "机器学习,深度学习,数据结构,Python,C++,Agent",
+        "keywords": meta.get("keywords") or "复变函数,积分变换,解析函数,留数,共形映射,傅里叶变换,拉普拉斯变换,z变换",
         "creator": "HTML+MathJax -> Chromium -> PyMuPDF pipeline",
     })
     doc.save(out_path, garbage=3, deflate=True)

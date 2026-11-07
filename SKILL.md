@@ -12,6 +12,23 @@ metadata:
 
 把一个资料夹变成一本**能读、能跑、能对照**的书。核心不是"总结"，而是**重建**：把散在 30 个 PDF、几十个脚本、若干 notebook 里的知识，按学科逻辑重排成一份有先修关系、有实验、有真实数字、有图的教材，并把原始材料里的每一页都在新书里有归属。
 
+## 装在哪、怎么验证
+
+本 skill 靠目录存在即可被 DSH 发现：`~/.dsh/skills/material-to-book/SKILL.md`。
+依赖只有五个 Python 库（pymupdf / matplotlib / numpy / pandas / pygments）+ 一个
+Edge/Chrome 用来打印 PDF。装好先体检，别等构建到一半才发现缺件：
+
+```bash
+python scripts/doctor.py          # 逐项检查并打印补装命令；--json 供脚本解析
+```
+
+Windows 一键：`powershell -ExecutionPolicy Bypass -File .\install.ps1`
+（`-Check` 只体检，`-SkipDeps` 只复制，`-Dest` 换位置，`-Python` 指定解释器）。
+macOS/Linux：`./install.sh`。手工装法与排错表见 `INSTALL.md`。
+
+> Windows PowerShell 5.1 读 `.ps1` 用的是本地代码页，**脚本必须存成 UTF-8 with BOM**，
+> 否则中文会把引号解析坏，报 `You must provide a value expression following the '%' operator`。
+
 ## 第一件事：先访谈（阶段 −1）
 
 **不要一上来就读材料、排章节。**先花十分钟把四件事问清楚：哪份是主线、按什么顺序讲、写到多深、给谁看。这四件事猜错的代价是整本返工（真实项目里 848 页的详版→324 页→250 页，两次大改都源于方向猜错）。
@@ -176,6 +193,16 @@ vol/<vol>/NN_标题.html  ──collect──►  整卷 HTML（封面 + 目录 
 - **快照**：`build_vol()` 开头只 `collect()` 一次，三遍构建用同一份片段快照，否则并发写作时会 IndexError。
 - **打印锁**：Windows 上 Edge 会延迟释放文件，输出名带时间戳 + `--user-data-dir` 带时间戳，再 `os.replace` 重试。
 
+**章号体例**由 `book.json` 的 `numbering` 决定，构建器统一执行，作者只写标题内容、不写号：
+
+| 取值 | 一级标题 | 二级标题 | 适用 |
+|---|---|---|---|
+| `textbook`（默认） | `第 6 章　柯西积分公式` | `6.1　柯西积分公式` | 教材体、教辅体 |
+| `lecture` | `06　柯西积分公式` | `06.1　柯西积分公式` | 讲义体、手册体 |
+
+两种体例下 `习题 N`、`本章小结`、`附录 X` 都不编号、不占小节序号。
+`< 90` 的数字前缀文件才参与编号，`00_` 与 `99_` 原样保留（前言、附录）。
+
 ### 阶段 6 · 质检（不许省）
 
 ```bash
@@ -224,8 +251,12 @@ python _build/tools/verify_book.py <pdf>    # 越界/空白页/卷起始页连�
 ```
 material-to-book/
 ├── SKILL.md
-├── scripts/            # 23 个可执行工具（init_project 会复制到项目的 _build/tools/）
+├── install.ps1 install.sh  # 一键安装（装依赖 + 复制到 ~/.dsh/skills + 体检）
+├── requirements.txt        # 五个必需库
+├── INSTALL.md              # 手工安装、升级、卸载、排错表
+├── scripts/            # 26 个可执行工具（init_project 会复制到项目的 _build/tools/）
 │   ├── intake.py           # 阶段 −1：扫文件角色 + 打印访谈卡 + 生成 intake.json
+│   ├── doctor.py           # 环境体检（解释器/依赖/浏览器/字体/脚本）
 │   ├── build.py            # HTML→PDF 流水线（配置驱动，读 _build/book.json）
 │   ├── extract_sources.py  # PDF/ipynb 抽取
 │   ├── pgs.py              # PDF 页 → PNG（人眼读图）

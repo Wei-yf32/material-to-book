@@ -6,6 +6,18 @@
 
 > 本仓库同时是一个 **DSH skill**：装到 `~/.dsh/skills/material-to-book/` 后，直接对模型说"把这个文件夹整理成一份讲义"即可触发。
 
+
+## 安装
+
+```powershell
+.\install.ps1            # Windows：装依赖 + 复制到 %USERPROFILE%\.dsh\skills + 体检
+./install.sh             # macOS / Linux
+```
+
+装完的判据是 `scripts/doctor.py` 末行打印「结论：可以开工」。
+细节（手动安装、指定解释器、升级、卸载、排错）见 [INSTALL.md](INSTALL.md)。
+
+
 ## 它会先问你（v2 新增）
 
 一上来不读材料，先花十分钟问清四件事：**哪份是主线**、按什么顺序讲、写到多深、给谁看。因为"猜错方向"的代价是整本返工。
