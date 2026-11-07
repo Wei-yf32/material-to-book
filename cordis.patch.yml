@@ -1,4 +1,5 @@
 # 把 material-to-book 这个组合包挂进 profile 的插件行。
+# 行名（id）与包名一致：本包既是组合包，也自己提供技能，不需要额外依赖。
 - insert:
-    - id: skill-material-to-book
+    - id: dsh-skill-material-to-book
       name: 'dsh-skill-material-to-book'

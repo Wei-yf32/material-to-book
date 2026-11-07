@@ -1,0 +1,84 @@
+{
+  "format": 1,
+  "title": {
+    "en": "Material to Book",
+    "zh": "资料成书"
+  },
+  "description": {
+    "en": "Turn a folder of heterogeneous course materials into one typeset, printable book: ask first, then build multi-volume PDF / DOCX / PPT / HTML.",
+    "zh": "把一个资料夹整理成一本可印刷的讲义：先访谈定主线，再建多卷 PDF / DOCX / PPT / HTML。"
+  },
+  "metadata": {
+    "categories": {
+      "document": {
+        "title": {
+          "en": "Documents",
+          "zh": "文档与排版"
+        }
+      }
+    },
+    "labels": {
+      "skill": {
+        "title": {
+          "en": "Skill",
+          "zh": "技能"
+        }
+      },
+      "pdf": {
+        "title": {
+          "en": "PDF",
+          "zh": "PDF"
+        }
+      }
+    }
+  },
+  "plugins": [
+    {
+      "name": "dsh-skill-material-to-book",
+      "title": {
+        "en": "Material to Book",
+        "zh": "资料成书"
+      },
+      "description": {
+        "en": "Hand over a course folder and get one deeply integrated book: 14-question intake, superset audit of every source page, per-chapter writing, multi-volume PDF with TOC, bookmarks, real figures and run-verified code.",
+        "zh": "给一个课程文件夹，产出一本真正整合过的书：十四问访谈、逐页超集审计、分章写作、多卷 PDF（目录、书签、真实插图、跑过的代码）。"
+      },
+      "icon": "icon.svg",
+      "author": "wyf",
+      "homepage": "https://github.com/Wei-yf32/material-to-book",
+      "repository": {
+        "url": "https://github.com/Wei-yf32/material-to-book"
+      },
+      "metadata": {
+        "category": "document",
+        "keywords": [
+          "讲义",
+          "教材",
+          "PDF",
+          "排版",
+          "course notes",
+          "textbook",
+          "typesetting"
+        ],
+        "labels": [
+          "skill",
+          "pdf"
+        ]
+      },
+      "versions": [
+        {
+          "version": "2.1.0",
+          "publishTimestamp": 1794055366,
+          "source": {
+            "type": "git",
+            "url": "https://github.com/Wei-yf32/material-to-book",
+            "commit": "b0111d637bd28a449bf65688d2b0cd64bd51a578"
+          },
+          "engines": {
+            "dsh": ">=0.2.1-rc.3 <0.3.0"
+          }
+        }
+      ]
+    }
+  ]
+}
