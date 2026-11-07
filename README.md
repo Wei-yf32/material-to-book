@@ -6,6 +6,16 @@
 
 > 本仓库同时是一个 **DSH skill**：装到 `~/.dsh/skills/material-to-book/` 后，直接对模型说"把这个文件夹整理成一份讲义"即可触发。
 
+## 它会先问你（v2 新增）
+
+一上来不读材料，先花十分钟问清四件事：**哪份是主线**、按什么顺序讲、写到多深、给谁看。因为"猜错方向"的代价是整本返工。
+
+```bash
+python scripts/intake.py "D:\课程资料"
+```
+
+它会把资料夹读成一张表（文件 / 页数 / 文字层 / 内嵌图 / 我看出的信号 / 角色判断＋置信度），打印一张 14 问的访谈卡（可直接整段发给用户），并写出 `_build/intake.json` 草案；答完用 `--apply` 合并进 `book.json` 的 `intake` 段。问法、默认值、学科档位表见 [`references/intake.md`](references/intake.md)。
+
 ## 长什么样
 
 ![封面](docs/screenshots/cover.jpg)
@@ -63,6 +73,7 @@ python _build/tools/build.py merge
 ```
 SKILL.md                 # 给模型看的完整说明书（工作流、规范、验收）
 scripts/                 # 23 个可直接跑的脚本
+  intake.py              #   阶段 −1：扫文件角色 + 访谈卡 + intake.json
   init_project.py        #   初始化 _build/
   build.py               #   HTML 片段 → PDF → 页码/书签 → 合订
   extract_sources.py     #   PDF / ipynb 抽取
@@ -74,6 +85,7 @@ scripts/                 # 23 个可直接跑的脚本
   renumber.py fixrefs.py cwembed.py v3check.py cwaudit.py finalize.py …
 assets/book.css          # A4 排版样式（页眉页脚、代码条、树状图、数据块）
 references/
+  intake.md              # 十四问访谈、学科默认档位、派生参数
   pipeline.md            # 构建细节与 book.json
   style-guide.md         # 写作规范（深度四层、语言、公式、图表）
   experiment-spec.md     # 实验八节 + docstring 四段 + 代码关系

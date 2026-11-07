@@ -3,7 +3,7 @@ name: material-to-book
 description: Turn a folder of heterogeneous materials (course slides, lecture PDFs, notebooks, source code, CSV/datasets, old notes) into one deeply-integrated, typeset deliverable — by default a multi-volume PDF book with covers, TOC, bookmarks, real figures and run-verified code; can also emit DOCX reports, PPT decks, single-file HTML or Markdown. Use when the user says "把这堆资料整理成一份讲义/手册/汇总", "合并这些课件", "生成一份教学文档", "把实验代码讲清楚", or hands over a course/材料 folder and wants a teaching-quality document rather than a summary.
 whenToUse: 用户给了一个装着课件 PDF / 代码 / notebook / 数据集的文件夹，要求合并、深化、扩写成一份能读、能复现、能教学的文档（讲义、手册、白皮书、实验指导书）。也适用于把已有长文档升级成"可复现 + 有实验 + 有图"的版本。
 metadata:
-  version: "1.0"
+  version: "2.0"
   author: "wyf"
   language: "zh-CN"
 ---
@@ -11,6 +11,18 @@ metadata:
 # 资料 → 讲义（material-to-book）
 
 把一个资料夹变成一本**能读、能跑、能对照**的书。核心不是"总结"，而是**重建**：把散在 30 个 PDF、几十个脚本、若干 notebook 里的知识，按学科逻辑重排成一份有先修关系、有实验、有真实数字、有图的教材，并把原始材料里的每一页都在新书里有归属。
+
+## 第一件事：先访谈（阶段 −1）
+
+**不要一上来就读材料、排章节。**先花十分钟把四件事问清楚：哪份是主线、按什么顺序讲、写到多深、给谁看。这四件事猜错的代价是整本返工（真实项目里 848 页的详版→324 页→250 页，两次大改都源于方向猜错）。
+
+```bash
+python scripts/intake.py "D:\课程资料"        # 扫出文件角色表 + 打印访谈卡 + 写 _build/intake.json 草案
+# 答完访谈、改好 json 之后：
+python scripts/intake.py "D:\课程资料" --apply   # 合并进 _build/book.json 的 intake 段
+```
+
+十四问的完整问法、选项、默认值、派生参数、矛盾检查见 `references/intake.md`；访谈卡可直接整段发给用户。
 
 ## 何时用
 
@@ -60,9 +72,30 @@ metadata:
 
 16. **面向工科学习与工程落地**：不绑定具体专业。数学给到「能算」的程度，重点补工程侧——复杂度、内存、数据规模、部署与延迟、失败模式与代价；至少一章用一个「能上岗」的完整案例（从数据到指标到上线约束）走通一遍。
 
+17. **标题先沿用原书，再补一句**：标题要同时做到"能被检索"和"能预告内容"。原书标题通常已经做到了第一条（老师、考纲、真题都用它），所以**默认不改**。只对"名字对、但读者看不出里面讲什么"的节动手，且优先加副标题（`对数函数：多值从哪一步冒出来`）而不是换掉原名。换掉原名词的节不超过全章三成；原书或考纲用过的名词必须出现在标题或副标题里；"三件事、两个数、一次跳变"这类只有钩子没有名词的标题一律不用。
+
 > 40+ 条要求的逐条对照表（带验收动作）在 `references/requirements.md`，交付前逐行过一遍。
 
 ## 工作流
+
+### 阶段 −1 · 访谈（十分钟，省一次返工）
+
+要问的只有四类：
+
+| 类 | 必须问到的 | 默认值 |
+|---|---|---|
+| 材料 | 哪份是**主线**（骨架）；哪些是扩展、参考、不用 | 最厚那份；旧 AI 汇总一律"参考" |
+| 主线 | 章序按教材／考点／项目／概念地图；覆盖到多细（定义定理、例题、证明、习题四项分别定） | 教材顺序；定义定理全含，例题与证明含主体，习题全含 |
+| 写法 | 体例（教材体／讲义体／手册体）、语气、重点标记方式、要不要"应用"节、标题策略 | 教材体＋讲课腔；应用节走完整流程；标题沿用原书 |
+| 交付 | 代码与工程案例档位（0–3）、篇幅、形态、验收口径 | 按学科查 `references/intake.md` 的矩阵 |
+
+三条纪律：
+
+1. **一次问完**，标 ★ 的只留三四项，其余给默认值，允许用户说"按默认"。
+2. **先扫再问**：空手问用户答不出，先给一张"文件 / 页数 / 文字层 / 信号 / 判断"的表，让他改判断而不是从零描述。
+3. **答完复述**：一句话把结论重复给用户（"主线是 A，教辅是 B 和 C，按教材顺序，电子专业，不放代码"），改一个字比改一本书便宜。
+
+访谈结果写进 `_build/intake.json`，再由 `book.json.intake` 引用。**写作开始后改体例＝重排全书**，所以体例这一项必须在动笔前定死。
 
 ### 阶段 0 · 侦察（不要跳过）
 
@@ -192,7 +225,7 @@ python _build/tools/verify_book.py <pdf>    # 越界/空白页/卷起始页连�
 material-to-book/
 ├── SKILL.md
 ├── scripts/            # 23 个可执行工具（init_project 会复制到项目的 _build/tools/）
-│   ├── init_project.py     # 初始化一本书的 _build/
+│   ├── intake.py           # 阶段 −1：扫文件角色 + 打印访谈卡 + 生成 intake.json
 │   ├── build.py            # HTML→PDF 流水线（配置驱动，读 _build/book.json）
 │   ├── extract_sources.py  # PDF/ipynb 抽取
 │   ├── pgs.py              # PDF 页 → PNG（人眼读图）
@@ -208,6 +241,7 @@ material-to-book/
 │   └── finalize.py         # 一键收尾（重排→构建→合订）
 ├── assets/book.css     # 排版样式（A4、页眉页脚、代码块、树状图、数据块）
 └── references/
+    ├── intake.md           # 十四问访谈、学科默认档位、派生参数、矛盾检查
     ├── pipeline.md         # 构建细节与 book.json 字段
     ├── style-guide.md      # 写作规范
     ├── experiment-spec.md  # 实验八节 + docstring 四段
@@ -220,6 +254,10 @@ material-to-book/
 ## 快速开始
 
 ```bash
+# 0. 先访谈（十分钟）：扫出角色表、发访谈卡、生成 intake.json
+python <skill>/scripts/intake.py "D:\课程资料"
+python <skill>/scripts/intake.py "D:\课程资料" --apply    # 答完后合并进 book.json
+
 # 1. 在资料夹里初始化
 python <skill>/scripts/init_project.py "D:\课程资料" --title "XX 系统讲义" --volumes 3
 
