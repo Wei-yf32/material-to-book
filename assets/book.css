@@ -366,3 +366,48 @@ pre.data::before{
   content:"数据速览"; display:block; font-family:"Noto Serif SC","Microsoft YaHei",serif;
   font-size:8pt; color:#6f7f9a; letter-spacing:.5pt; margin-bottom:1.2mm;
 }
+
+/* ================= 教材体：定义 / 定理 / 证明 / 例题 ================= */
+.env{ margin:2.6mm 0 3.0mm 0; padding:1.9mm 3.0mm 1.9mm 3.4mm;
+      border-left:2.4pt solid #9a8f78; background:#fbfaf6; break-inside:auto; }
+.env .tag{ font-weight:700; color:#7a5c2e; margin-right:2.2mm; letter-spacing:.2pt; }
+.defn{ border-left-color:#8a3b12; background:#fdf8f4; }
+.defn .tag{ color:#8a3b12; }
+.thm{ border-left-color:#1f4e79; background:#f5f8fb; }
+.thm .tag{ color:#1f4e79; }
+.cor{ border-left-color:#1f4e79; background:#fafcfe; }
+.cor .tag{ color:#1f4e79; }
+.proof{ margin:.6mm 0 3.0mm 3.4mm; padding:.4mm 0 .4mm 3.2mm;
+        border-left:1pt dotted #b8b0a0; color:#3d3a33; font-size:9.6pt; line-height:1.62; }
+.proof .tag{ font-weight:600; color:#6a6355; margin-right:1.8mm; }
+.proof::after{ content:"∎"; float:right; color:#6a6355; }
+.eg{ margin:2.4mm 0 3.0mm 0; padding:0 0 0 0; }
+.eg .tag{ font-weight:700; color:#2f2b25; margin-right:2mm; }
+.eg .sol{ margin:.6mm 0 0 4.6mm; }
+.eg .sol b{ color:#7a5c2e; }
+.rmk{ margin:2.0mm 0 2.6mm 3.4mm; padding-left:3.0mm; border-left:1.6pt solid #ddd6c6;
+      font-size:9.6pt; color:#43403a; }
+.rmk .tag{ font-weight:600; color:#6a6355; margin-right:1.6mm; }
+
+/* ================= 本章习题 ================= */
+.exs{ margin-top:3.4mm; }
+.exs .grp{ margin:2.6mm 0 1.2mm 0; font-weight:700; color:#2f2b25; }
+.exs ol{ margin:.8mm 0 2.4mm 0; padding-left:7mm; }
+.exs li{ margin-bottom:2.0mm; line-height:1.66; }
+.exs .ans{ color:#4a4a44; }
+.exs .ans b{ color:#7a5c2e; font-weight:600; }
+
+/* 章节标题：教材式，不加花饰 */
+h1{ }
+
+/* ===== 教材体标签：去掉代码块的深色胶囊，改成纯文字标签 ===== */
+.env > .tag,.proof > .tag,.eg > .tag,.sol > .tag,.rmk > .tag{
+  display:inline; background:none !important; color:inherit; padding:0; border-radius:0;
+  font-size:10pt; vertical-align:baseline; letter-spacing:0;
+}
+.env .tag{ font-family:"Microsoft YaHei",sans-serif; }
+
+/* 教材体块尽量不跨页断开 */
+.env.defn,.env.thm,.env.cor{ break-inside:avoid; }
+.eg{ break-inside:avoid-page; }
+.rmk{ break-inside:avoid; }
