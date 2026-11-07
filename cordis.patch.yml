@@ -1,0 +1,4 @@
+# 把 material-to-book 这个组合包挂进 profile 的插件行。
+- insert:
+    - id: skill-material-to-book
+      name: 'dsh-skill-material-to-book'

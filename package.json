@@ -1,0 +1,61 @@
+{
+  "name": "dsh-skill-material-to-book",
+  "version": "2.1.0",
+  "description": "把一文件夹资料整理成一本可印刷的讲义：先访谈定主线，再建多卷 PDF / DOCX / PPT / HTML。",
+  "keywords": [
+    "dsh-plugin",
+    "dsh-bundle",
+    "skill",
+    "material-to-book",
+    "pdf",
+    "typesetting",
+    "讲义"
+  ],
+  "license": "MIT",
+  "author": "wyf",
+  "homepage": "https://github.com/Wei-yf32/material-to-book",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Wei-yf32/material-to-book.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Wei-yf32/material-to-book/issues"
+  },
+  "type": "module",
+  "main": "lib/index.js",
+  "icon": "./icon.svg",
+  "exports": {
+    ".": "./lib/index.js",
+    "./cordis.patch.yml": "./cordis.patch.yml",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "assets",
+    "cordis.patch.yml",
+    "examples",
+    "icon.svg",
+    "INSTALL.md",
+    "lib/index.js",
+    "README.md",
+    "references",
+    "requirements.txt",
+    "scripts",
+    "SKILL.md"
+  ],
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    }
+  },
+  "peerDependencies": {
+    "@deepseek-ai/cordis": "~4.0.5"
+  },
+  "peerDependenciesMeta": {
+    "@deepseek-ai/cordis": {
+      "optional": true
+    }
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

@@ -141,3 +141,17 @@ examples/book.example.json
 ## License
 
 MIT，见 [LICENSE](LICENSE)。
+
+## 作为一个 DSH 组合包安装（可选）
+
+仓库自带 `package.json` + `cordis.patch.yml` + `lib/index.js`，所以它同时是一个 **bundle**（组合包）和一个 **技能提供者**：装进 profile 后，技能页面直接出现 `material-to-book`，不需要再复制到 `~/.dsh/skills`。
+
+装法有三种，任选一种：
+
+| 场景 | 做法 |
+|---|---|
+| 只想给自己用 | 把本仓库克隆到 `~/.dsh/skills/material-to-book`（或跑 `install.ps1`），不需要组合包 |
+| 有插件市场索引 | 插件页「发现」→ 添加索引源，填 `https://raw.githubusercontent.com/Wei-yf32/material-to-book/main/market-index.json`，然后装 `dsh-skill-material-to-book` |
+| 手动装本仓库 | 在 profile 目录里 `pnpm add git+https://github.com/Wei-yf32/material-to-book.git#<commit>`，再把 `dsh-skill-material-to-book` 加进 `package.json` 的 `dsh.profile.bundles` |
+
+装成组合包后，如果 `~/.dsh/skills/material-to-book` 还在，同名技能会出现两份，只有一份生效（打包技能优先级 600）。要去掉重复，删掉那个目录即可——插件里的副本带同样的 `scripts/`、`references/`，功能一致。
