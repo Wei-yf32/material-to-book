@@ -27,15 +27,19 @@
   "exports": {
     ".": "./lib/index.js",
     "./cordis.patch.yml": "./cordis.patch.yml",
+    "./icon": "./icon.svg",
+    "./locale/*.json": "./locale/*.json",
     "./package.json": "./package.json"
   },
   "files": [
     "assets",
     "cordis.patch.yml",
+    "docs",
     "examples",
     "icon.svg",
     "INSTALL.md",
     "lib/index.js",
+    "locale",
     "README.md",
     "references",
     "requirements.txt",

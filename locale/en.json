@@ -1,0 +1,7 @@
+{
+  "meta": {
+    "title": "Material to book",
+    "description": "Turns a folder of course materials into one typeset book. Asks fourteen questions first, audits every source page, then builds a multi-volume PDF with TOC, bookmarks, real figures and run-verified code.",
+    "detail": "docs/DETAIL.md"
+  }
+}
