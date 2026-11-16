@@ -68,11 +68,11 @@
       "versions": [
         {
           "version": "2.1.0",
-          "publishTimestamp": 1794055366,
+          "publishTimestamp": 1794828476,
           "source": {
             "type": "git",
             "url": "https://github.com/Wei-yf32/material-to-book",
-            "commit": "b0111d637bd28a449bf65688d2b0cd64bd51a578"
+            "commit": "3a009be9421a986ba9c3ce92326dbffd36239766"
           },
           "engines": {
             "dsh": ">=0.2.1-rc.3 <0.3.0"
